@@ -1,5 +1,4 @@
-var mangoose=require('mongoose');
-
+var mongoose=require('mongoose')
 var todoSchema=new mongoose.Schema({
     name:{
         type:String,
