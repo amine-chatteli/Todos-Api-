@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import TodoItem from './TodoItem';
 import TodoForm from './TodoForm'
 
-const APIURL = '/api/todos';
+const APIURL = '/api/todos/';
 
 
 class TodoList extends Component {
@@ -66,8 +66,66 @@ class TodoList extends Component {
         
     }
     toggleTodo(todo){
-        console.log(todo._id);
+        const updateUrl=APIURL+todo._id
+        fetch(updateUrl,{
+            method:'put',
+            headers: new Headers({
+                'Content-Type':'application/json'
+            }),
+            body:JSON.stringify({completed:!todo.completed})
+        })
+        .then(resp => {
+            if (!resp.ok) {
+                if (resp.status >= 400 && resp.status < 500) {
+                    return resp.json().then(data => {
+                        let err = { errorMessage: data.message };
+                        throw err;
+                    })
+                } else {
+                    let err = { errorMessage: "Please Try  again later" };
+                    throw err
+                }
+            }
+            return resp.json()
+        })
+        .then(updatedTodo=>{
+            const todos=this.state.todos.map(todo=>(
+                (todo._id===updatedTodo._id)?
+                {...todo,completed:!todo.completed}:todo
+                ))
+            this.setState({todos});
+        })
         
+    }
+
+    // DELETE REQUEST
+
+    deleteTodo(id){
+        const deleteUrl=APIURL+id
+        fetch(deleteUrl,{
+            method:'delete',
+           
+        })
+        .then(resp => {
+            if (!resp.ok) {
+                if (resp.status >= 400 && resp.status < 500) {
+                    return resp.json().then(data => {
+                        let err = { errorMessage: data.message };
+                        throw err;
+                    })
+                } else {
+                    let err = { errorMessage: "Please Try  again later" };
+                    throw err
+                }
+            }
+            return resp.json()
+        })
+        .then(()=>{
+            const todos=this.state.todos.filter(todo=>todo._id!==id);
+            this.setState({todos});
+        })
+        
+    
     }
 
     render() {
@@ -75,7 +133,9 @@ class TodoList extends Component {
       let output= todos.map(todo=>{
           return(
               <TodoItem key={todo._id} {...todo}
-              onToggle={this.toggleTodo.bind(this,todo)}  />
+              onToggle={this.toggleTodo.bind(this,todo)} 
+              onDelete={this.deleteTodo.bind(this,todo._id)}
+              />
           )
       })
         return (
