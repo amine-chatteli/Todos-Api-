@@ -1,10 +1,13 @@
 import React from 'react';
 
 
-const TodoItem = ({ name,completed  }) => {
+const TodoItem = ({name,completed,onToggle}) => {
 
     return (
-        <li style={{textDecoration:completed?'line-through':'none'}}>
+        <li >
+            <span  style={{textDecoration:completed?'line-through':'none'}}
+            onClick={onToggle}>{name}</span>
+        
             {name}
         </li>)
 }

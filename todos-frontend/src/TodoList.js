@@ -12,6 +12,7 @@ class TodoList extends Component {
             todos: []
         }
         this.addTodo=this.addTodo.bind(this);
+      
     }
     componentDidMount() {
         this.loadTodos();
@@ -64,11 +65,17 @@ class TodoList extends Component {
         .then(newTodo  => this.setState({ todos:[...this.state.todos,newTodo] }));
         
     }
+    toggleTodo(todo){
+        console.log(todo._id);
+        
+    }
+
     render() {
        let {todos}=this.state
       let output= todos.map(todo=>{
           return(
-              <TodoItem key={todo._id} {...todo} />
+              <TodoItem key={todo._id} {...todo}
+              onToggle={this.toggleTodo.bind(this,todo)}  />
           )
       })
         return (
